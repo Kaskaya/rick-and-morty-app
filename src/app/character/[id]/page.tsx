@@ -1,20 +1,41 @@
 import { fetchCharacterById } from "@/app/utils/api";
 import Link from "next/link";
 
-export default async function CharacterPage({ params }: any) {
-  const { id } = params;
-  const character = await fetchCharacterById(id);
+interface Character {
+  id: number;
+  name: string;
+  status: string;
+  species: string;
+  gender: string;
+  image: string;
+  location: {
+    name: string;
+    url: string;
+  };
+  origin: {
+    name: string;
+    url: string;
+  };
+}
 
-  /*   console.log(character); */
+interface CharacterPageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function CharacterPage({ params }: CharacterPageProps) {
+  const { id } = params;
+  const character: Character | null = await fetchCharacterById(id);
 
   if (!character) {
     return <div>Character not found</div>;
   }
 
   return (
-    <div className=" mx-auto p-4 max-w-screen-md min-h-screen flex items-center">
+    <div className="mx-auto p-4 max-w-screen-md min-h-screen flex items-center">
       <div className="bg-slate-700 rounded-lg shadow-md flex flex-col md:flex-row p-8 w-full">
-        <div className="w-2/5  flex items-center justify-center">
+        <div className="w-2/5 flex items-center justify-center">
           <Link
             href="/"
             className="mr-4 text-gray-300 hover:text-gray-500 font-bold text-xl"

@@ -1,14 +1,44 @@
 import Link from "next/link";
-import { fetchCharacters, fetchLocations } from "./utils/api";
+import { fetchCharacters, fetchLocations } from "@/app/utils/api";
 
-async function HomePage({ searchParams }: any) {
+interface Character {
+  id: number;
+  name: string;
+  status: string;
+  image: string;
+  location: {
+    name: string;
+    url: string;
+  };
+  origin: {
+    name: string;
+    url: string;
+  };
+}
+
+interface Location {
+  id: number;
+  name: string;
+}
+
+interface SearchParams {
+  status?: string;
+  location?: string;
+  page?: string;
+}
+
+interface HomePageProps {
+  searchParams: SearchParams;
+}
+
+async function HomePage({ searchParams }: HomePageProps) {
   const status = searchParams.status || "";
   const locationId = searchParams.location || "";
-  const page = parseInt(searchParams.page) || 1;
+  const page = parseInt(searchParams.page || "1");
   const itemsPerPage = 20;
 
-  const allCharacters = await fetchCharacters({ status });
-  const allLocations = await fetchLocations();
+  const allCharacters: Character[] = await fetchCharacters({ status });
+  const allLocations: Location[] = await fetchLocations();
 
   const filteredCharacters = allCharacters.filter((character) => {
     const matchesStatus =
@@ -102,7 +132,7 @@ async function HomePage({ searchParams }: any) {
             <Link
               href={{
                 pathname: "/",
-                query: { ...searchParams, page: page + 1 },
+                query: { ...searchParams, page: (page + 1).toString() },
               }}
               scroll={false}
               className="py-2 px-8 mt-4 bg-blue-500 text-lg font-bold text-white rounded"
